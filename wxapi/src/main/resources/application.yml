@@ -1,0 +1,57 @@
+server:
+  port: 8080
+  tomcat:
+    uri-encoding: utf-8
+  servlet:
+    context-path: /
+
+logging:
+  level:
+    root: WARN
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+
+spring:
+  http:
+    encoding:
+      charset: utf-8
+      force: true
+      enabled: true
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/wx_jx_miniprogram?useUnicode=true&characterEncoding=UTF-8&allowPublicKeyRetrieval=TRUE&autoReconnect=true&useSSL=false&serverTimezone=PRC
+    username: root
+    password: root
+    type: com.alibaba.druid.pool.DruidDataSource
+
+    druid:
+      initial-size: 2
+      min-idle: 2
+      max-active: 50
+      max-wait: 40000
+      time-between-eviction-runs-millis: 30000
+      min-evictable-idle-time-millis: 30000
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      use-global-data-source-stat: true
+
+
+  jpa:
+    database: mysql
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL57InnoDBDialect
+    hibernate:
+      ddl-auto: update
+
+
+#微信相关参数
+weChat:
+  #小程序appid
+  appid: sssss
+  #小程序密钥
+  secret: sssss

@@ -4,10 +4,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import top.kyqzwj.wx.facade.ResponsePayload;
+import top.kyqzwj.wx.jpa.repository.NativeSQL;
 import top.kyqzwj.wx.modules.v1.user.service.UserService;
 import top.kyqzwj.wx.util.Jcode2SessionUtil;
 import top.kyqzwj.wx.util.JwtTokenUtil;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,7 +41,7 @@ public class UserServiceImpl implements UserService {
             return new ResponsePayload(false, 40001, "获取用户微信session失败！", null);
         }
         //3.如果没有用户信息，就插入一条用户信息数据
-
+        int count = NativeSQL.findCountByNativeSQL("select count(*) from kz_user", null);
         //4.生成用户token返回
         return ResponsePayload.success(JwtTokenUtil.generateToken("sessionInfo"));
     }

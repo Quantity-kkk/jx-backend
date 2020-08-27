@@ -1,6 +1,7 @@
 package top.kyqzwj.wx.util;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
 import javax.servlet.http.Cookie;
@@ -9,6 +10,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,6 +25,7 @@ import java.util.regex.Pattern;
  */
 public class StringUtil {
     private static final String fullWidthSpace = "　";
+    private static final Map<String, String> CAMEL_CACHE = new ConcurrentHashMap();
     /**
      * 判断是否为空字符串（null或者空串）
      */
@@ -521,4 +524,57 @@ public class StringUtil {
     }
 
 
+    public static String camel(String str) {
+        if (isEmpty((CharSequence)str)) {
+            return str;
+        } else if (CAMEL_CACHE.containsKey(str)) {
+            return (String)CAMEL_CACHE.get(str);
+        } else {
+            String[] strs = str.toLowerCase().split("_");
+            String column = strs[0];
+
+            for(int i = 1; i < strs.length; ++i) {
+                column = column + String.valueOf(strs[i].charAt(0)).toUpperCase() + strs[i].substring(1, strs[i].length());
+            }
+
+            CAMEL_CACHE.put(str, column);
+            return column;
+        }
+    }
+
+    public static String getFirstLower(String string) {
+        return isEmpty((CharSequence)string) ? string : String.valueOf(string.charAt(0)).toLowerCase() + string.substring(1);
+    }
+
+    public static String[] split(String str, String... separators) {
+        String separator = ",";
+        if (ArrayUtil.isNotEmpty(separators)) {
+            separator = separators[0];
+        }
+
+        return StringUtils.split(str, separator);
+    }
+
+    public static String replace(String text, String searchString, String replacement) {
+        return StringUtils.replace(text, searchString, replacement);
+    }
+
+    public static String subString(String str, int start) {
+        return StringUtils.substring(str, start);
+    }
+
+    public static String subString(String str, int start, int end) {
+        return StringUtils.substring(str, start, end);
+    }
+
+    public static String firstCharToLowerCase(String str) {
+        char firstChar = str.charAt(0);
+        if (firstChar >= 'A' && firstChar <= 'Z') {
+            char[] arr = str.toCharArray();
+            arr[0] = (char)(arr[0] + 32);
+            return new String(arr);
+        } else {
+            return str;
+        }
+    }
 }

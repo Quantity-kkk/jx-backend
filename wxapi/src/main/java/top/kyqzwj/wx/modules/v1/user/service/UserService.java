@@ -2,6 +2,8 @@ package top.kyqzwj.wx.modules.v1.user.service;
 
 import top.kyqzwj.wx.facade.ResponsePayload;
 
+import java.util.Map;
+
 /**
  * Description:
  * Copyright: © 2019 CSNT. All rights reserved.
@@ -16,10 +18,10 @@ public interface UserService {
     /**
      * 微信小程序用户登录方法
      *
-     * @param code 前台传来的wx code
+     * @param data 前台传来的基础信息，包含登录的code，用户开放信息
      * @return top.kyqzwj.wx.facade.ResponsePayload 用户token信息
      * @exception Exception 微信调用过程中的未知错误
      *
      * */
-    ResponsePayload wxLogin(String code) throws Exception;
+    ResponsePayload wxLogin(Map<String, Object> data) throws Exception;
 }

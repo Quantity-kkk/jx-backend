@@ -3,6 +3,7 @@ package top.kyqzwj.wx.util;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import top.kyqzwj.wx.modules.v1.user.domain.KzUser;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -46,17 +47,17 @@ public class JwtTokenUtil {
      * @param user
      * @return
      */
-    public static String generateToken(String user){
+    public static String generateToken(KzUser user){
         Map<String, Object> map = new HashMap<>(16);
-        map.put("avatar","../../images/index-list/avatar/7.jpg");
-        map.put("nick_name","奇思妙想");
-        map.put("id","ZXJDKXS");
+        map.put("avatar",user.getAvatar());
+        map.put("nick_name",user.getNickName());
+        map.put("id",user.getUserId());
         return Jwts.builder()
-                .setId(user)
+                .setId(user.getUserId())
                 .setClaims(map)
                 .setExpiration(new Date(System.currentTimeMillis()))
                 .setIssuedAt(new Date())
-                .setIssuer("ZBB")
+                .setIssuer("JX")
                 .signWith(SignatureAlgorithm.HS512, SALT)
                 .compact();
     }

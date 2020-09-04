@@ -8,7 +8,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import top.kyqzwj.wx.bean.UserContext;
 import top.kyqzwj.wx.util.*;
 
 import javax.persistence.EntityManager;

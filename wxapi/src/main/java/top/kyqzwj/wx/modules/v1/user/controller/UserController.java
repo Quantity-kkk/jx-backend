@@ -33,7 +33,7 @@ public class UserController {
      */
     @PostMapping("/wxLogin")
     public ResponsePayload wxLogin(@RequestBody Map<String, Object> param) throws Exception {
-        return service.wxLogin((String) param.get("code"));
+        return service.wxLogin(param);
     }
 
 

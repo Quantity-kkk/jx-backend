@@ -1,5 +1,7 @@
 package top.kyqzwj.wx.modules.v1.user.domain;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
@@ -26,24 +28,28 @@ public class KzUser {
     @GeneratedValue(generator = "system-uuid")
     @GenericGenerator(name = "system-uuid", strategy = "uuid")
     @Column(name="user_id", length = 32, unique = true, nullable = false)
+    @JSONField(name = "id")
     private String userId;
 
     @Column(name="password", length = 512)
+    @JSONField(serialize = false)
     private String password;
 
     @Column(name="nick_name", length = 64)
+    @JSONField(name = "nickName")
     private String nickName;
 
-    @Column(name="avatar", length = 63)
+    @Column(name="avatar")
     private String avatar;
 
-    @Column(name="signature", length = 256)
+    @Column(name="signature")
     private String signature;
 
     @Column(name="male")
     private int male;
 
     @Column(name="birth")
+    @JSONField(format = "yyyy年MM月dd日")
     private Date birth;
 
     /**
@@ -51,15 +57,19 @@ public class KzUser {
      * 1-mini program 微信小程序
      * */
     @Column(name="type")
+    @JSONField(serialize = false)
     private int type;
 
     /**微信账号体系相关字段：openId,sessionKey，unionId*/
     @Column(name="open_id")
+    @JSONField(serialize = false)
     private String openId;
 
     @Column(name="session_key")
+    @JSONField(serialize = false)
     private String sessionKey;
 
     @Column(name="union_id")
+    @JSONField(serialize = false)
     private String unionId;
 }

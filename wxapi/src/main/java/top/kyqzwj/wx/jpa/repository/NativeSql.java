@@ -24,18 +24,18 @@ import java.util.Map;
  * @Date 2020/8/27 21:12
  */
 @Repository
-public class NativeSQL {
+public class NativeSql {
     private static EntityManager em;
     private static JdbcTemplate jdbcTemplate;
 
-    public NativeSQL(EntityManager em, JdbcTemplate jdbcTemplate) {
-        NativeSQL.em = em;
-        NativeSQL.jdbcTemplate = jdbcTemplate;
+    public NativeSql(EntityManager em, JdbcTemplate jdbcTemplate) {
+        NativeSql.em = em;
+        NativeSql.jdbcTemplate = jdbcTemplate;
     }
 
     public static List<Map> findByNativeSQL(String strSql, List params, Integer... splitPage) {
         Query query = em.createNativeQuery(strSql);
-        ((NativeQueryImpl)query.unwrap(NativeQueryImpl.class)).setResultTransformer(MapResultTransformer.INSTANSE);
+        (query.unwrap(NativeQueryImpl.class)).setResultTransformer(MapResultTransformer.INSTANSE);
         if (ListUtil.isNotEmpty(params)) {
             for(int i = 0; i < params.size(); ++i) {
                 query.setParameter(i + 1, params.get(i));
@@ -49,23 +49,16 @@ public class NativeSQL {
     public static <T> List<T> findByNativeSQLPageable(String strSql, List params, Class<T> dtoClass, Pageable pageable) {
         Query query = JpaContext.getEntityManager().createNativeQuery(strSql);
         ((NativeQueryImpl)query.unwrap(NativeQueryImpl.class)).setResultTransformer(new DtoResultTransformer(dtoClass));
-        if (ListUtil.isNotEmpty(params)) {
-            for(int i = 0; i < params.size(); ++i) {
-                query.setParameter(i + 1, params.get(i));
-            }
-        }
-
-        if (pageable != null) {
-            query.setFirstResult(SQLCommon.calcStartFromPageable(pageable));
-            query.setMaxResults(SQLCommon.calcLimitFromPageable(pageable));
-        }
-
-        return query.getResultList();
+        return findByNativeSQLPageable(query, params, pageable);
     }
 
     public static List<Map> findByNativeSQLPageable(String strSql, List params, Pageable pageable) {
         Query query = em.createNativeQuery(strSql);
         ((NativeQueryImpl)query.unwrap(NativeQueryImpl.class)).setResultTransformer(MapResultTransformer.INSTANSE);
+        return findByNativeSQLPageable(query, params, pageable);
+    }
+
+    private static <T> List<T> findByNativeSQLPageable(Query query, List params, Pageable pageable){
         if (ListUtil.isNotEmpty(params)) {
             for(int i = 0; i < params.size(); ++i) {
                 query.setParameter(i + 1, params.get(i));

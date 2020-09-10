@@ -36,9 +36,15 @@ public class UserController {
         return service.wxLogin(param);
     }
 
-
-    public ResponsePayload getUserInfo(){
+    @RequestMapping("/{userId}/")
+    public ResponsePayload getUserInfo(@PathVariable("userId") String userId){
         //根据用户ID获取用户更详细的基本信息
-        return new ResponsePayload();
+        return service.getUser(userId);
+    }
+
+    @RequestMapping("/visit/{userId}/")
+    public ResponsePayload getVisitUserInfo(@PathVariable("userId") String userId){
+        //根据用户ID获取用户更详细的基本信息
+        return service.getVisitUser(userId);
     }
 }

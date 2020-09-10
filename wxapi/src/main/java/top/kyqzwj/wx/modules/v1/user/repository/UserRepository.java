@@ -1,10 +1,13 @@
 package top.kyqzwj.wx.modules.v1.user.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import top.kyqzwj.wx.modules.v1.user.domain.KzUser;
+
+import java.util.Map;
 
 /**
  * Description:

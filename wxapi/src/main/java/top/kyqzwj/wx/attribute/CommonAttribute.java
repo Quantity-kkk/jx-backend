@@ -14,4 +14,6 @@ import java.util.List;
  */
 public class CommonAttribute {
     public static final List<String> FRAMEWORK_FIELDS = Arrays.asList("id", "createBy", "updatedBy", "createTime", "updateTime", "isVoid", "departmentCode", "companyCode", "locTimeZone");
+
+    public static final String SPLIT_VERTICAL = "\\|";
 }

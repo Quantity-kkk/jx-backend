@@ -273,7 +273,7 @@ public class ObjectUtil {
                     String field = StringUtil.firstCharToLowerCase(methodName.substring(3));
                     if ((!skipId || !field.toLowerCase().equals("id")) && (resultField.contains(field) || ingoreCase && resultField.contains(field.toLowerCase()))) {
                         try {
-                            method.invoke(object, null);
+                            method.invoke(object);
                         } catch (Exception var14) {
                             logger.error("移除框架属性发生异常！字段：{}", methodName, var14);
                         }

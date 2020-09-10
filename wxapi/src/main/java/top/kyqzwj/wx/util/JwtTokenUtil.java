@@ -3,6 +3,7 @@ package top.kyqzwj.wx.util;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Value;
 import top.kyqzwj.wx.modules.v1.user.domain.KzUser;
 
 import java.util.Date;
@@ -19,7 +20,7 @@ import java.util.Map;
  * @Date 2020/8/25 13:39
  */
 public class JwtTokenUtil {
-
+    public static final long TOKEN_EXPIRED = 7 * 24 * 60 * 60 * 1000;
     /**
      * 加密解密盐值
      * */
@@ -55,7 +56,7 @@ public class JwtTokenUtil {
         return Jwts.builder()
                 .setId(user.getUserId())
                 .setClaims(map)
-                .setExpiration(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis()+ TOKEN_EXPIRED))
                 .setIssuedAt(new Date())
                 .setIssuer("JX")
                 .signWith(SignatureAlgorithm.HS512, SALT)
@@ -70,7 +71,8 @@ public class JwtTokenUtil {
     public static String parseToken(String token) {
         String subject = null;
         try {
-            subject = getTokenBody(token).getSubject();
+            Claims tokenBody = getTokenBody(token);
+            subject = (String) tokenBody.get("id");
         } catch (Exception e) {
         }
         return subject;

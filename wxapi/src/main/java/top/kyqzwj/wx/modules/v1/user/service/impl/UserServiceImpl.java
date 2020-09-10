@@ -2,6 +2,7 @@ package top.kyqzwj.wx.modules.v1.user.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import top.kyqzwj.wx.facade.ResponsePayload;
@@ -9,11 +10,9 @@ import top.kyqzwj.wx.jpa.repository.NativeSql;
 import top.kyqzwj.wx.modules.v1.user.domain.KzUser;
 import top.kyqzwj.wx.modules.v1.user.repository.UserRepository;
 import top.kyqzwj.wx.modules.v1.user.service.UserService;
-import top.kyqzwj.wx.util.BeanUtil;
-import top.kyqzwj.wx.util.JSONUtil;
-import top.kyqzwj.wx.util.Jcode2SessionUtil;
-import top.kyqzwj.wx.util.JwtTokenUtil;
+import top.kyqzwj.wx.util.*;
 
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -70,6 +69,34 @@ public class UserServiceImpl implements UserService {
         Map<String, Object> retMap = BeanUtil.toBean(user, Map.class);
         retMap.put("token", JwtTokenUtil.generateToken(user));
         //4.生成用户token，同时返回userDetail信息
+        return ResponsePayload.success(retMap);
+    }
+
+    @Override
+    public ResponsePayload getUser(String userId){
+        KzUser user = repository.findById(userId).get();
+        Map<String, Object> retMap = BeanUtil.toBean(user, Map.class);
+        retMap.put("token", JwtTokenUtil.generateToken(user));
+        return ResponsePayload.success(retMap);
+    }
+
+    /**
+     * 获取用户信息，主要可以得知是否是关联好友
+     * */
+    @Override
+    public ResponsePayload getVisitUser(String userId){
+        String querySql = "select user_id as id, avatar, birth, male, nick_name,poster,(select 1 from kz_user_associate where user_id=? and friend_id=?) as is_friends from kz_user where user_id=?";
+        String currentUserId = SecurityContextHolder.getContext().getAuthentication().getName();
+        Map<String, Object> retMap = NativeSql.findOneByNativeSQL(querySql, Arrays.asList(currentUserId, userId, userId));
+        if(retMap!=null){
+            Integer isFriends = MathUtil.toInteger(retMap.get("isFriends"));
+            if(isFriends!=null && isFriends>0){
+                retMap.put("isFriends",true);
+            }else {
+                retMap.put("isFriends",false);
+            }
+        }
+
         return ResponsePayload.success(retMap);
     }
 }

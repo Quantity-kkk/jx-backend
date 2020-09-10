@@ -4,6 +4,8 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.ToString;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -39,6 +41,9 @@ public class KzUser {
     @JSONField(name = "nickName")
     private String nickName;
 
+    /**
+     * 用户头像
+     * */
     @Column(name="avatar")
     private String avatar;
 
@@ -51,6 +56,12 @@ public class KzUser {
     @Column(name="birth")
     @JSONField(format = "yyyy年MM月dd日")
     private Date birth;
+
+    /**
+     * 用户封面
+     * */
+    @Column(name="poster")
+    private String poster;
 
     /**
      * 用户类型：
@@ -72,4 +83,8 @@ public class KzUser {
     @Column(name="union_id")
     @JSONField(serialize = false)
     private String unionId;
+
+    @Column(name="create_time",columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP", insertable = false, updatable = false)
+    @Generated(GenerationTime.INSERT)
+    private Date createTime;
 }

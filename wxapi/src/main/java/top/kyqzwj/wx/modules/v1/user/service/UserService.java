@@ -24,4 +24,22 @@ public interface UserService {
      *
      * */
     ResponsePayload wxLogin(Map<String, Object> data) throws Exception;
+
+
+    /**
+     * 获取用户基本信息，刷新token等
+     *
+     * @param userId
+     * @return top.kyqzwj.wx.facade.ResponsePayload
+     * */
+    ResponsePayload getUser(String userId);
+
+    /**
+     * 获取浏览用户基本信息
+     *
+     * @param userId
+     * @return top.kyqzwj.wx.facade.ResponsePayload
+     * */
+    ResponsePayload getVisitUser(String userId);
+
 }

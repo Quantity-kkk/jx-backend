@@ -31,13 +31,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
         response.setCharacterEncoding("utf-8");
         if (null == authHeader || !authHeader.startsWith("Bearer ")){
-            if(request.getRequestURI().equals("/user")){
-                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken("async",null,new HashSet<>());
-                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-            }else {
-                SecurityContextHolder.clearContext();
-            }
+//            SecurityContextHolder.clearContext();
             //token格式不正确
             filterChain.doFilter(request,response);
             return;
@@ -45,10 +39,10 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         String authToken = authHeader.substring("Bearer ".length());
 
         //获取在token中自定义的subject，用作用户标识，用来获取用户权限
-        String subject = JwtTokenUtil.parseToken(authToken);
+        String id = JwtTokenUtil.parseToken(authToken);
 
         //将信息交给security
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(subject,null,new HashSet<>());
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(id,null,new HashSet<>());
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         filterChain.doFilter(request,response);

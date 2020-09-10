@@ -1,5 +1,6 @@
 package top.kyqzwj.wx.util;
 
+import org.apache.commons.lang3.CharSequenceUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
@@ -188,7 +189,7 @@ public class StringUtil {
     /**
      * 根据分隔符合并List到字符串
      */
-    public static String joinForSqlIn(List lstInput, String delim) {
+    public static String joinForSqlIn(Collection lstInput, String delim) {
         if (lstInput == null || lstInput.size() == 0) {
             return "";
         }
@@ -577,4 +578,9 @@ public class StringUtil {
             return str;
         }
     }
+
+    public static String unwrap(String str, String wrapToken) {
+        return StringUtils.unwrap(str, wrapToken);
+    }
+
 }

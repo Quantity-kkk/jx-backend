@@ -58,4 +58,14 @@ public class FileUtil {
     public static String getyyyyMMddPath(Date date) {
         return DateUtil.formatDate(date, DateUtil.format_yyyy_MM_dd_path);
     }
+
+    /**
+     * 获取版本的yyyy/MM的路径
+     *
+     * @param date
+     * @return
+     */
+    public static String getyyyyMMPath(Date date) {
+        return DateUtil.formatDate(date, DateUtil.format_yyyy_MM_path);
+    }
 }

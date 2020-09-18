@@ -5,15 +5,19 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 import top.kyqzwj.wx.facade.ResponsePayload;
+import top.kyqzwj.wx.helper.UserHelper;
 import top.kyqzwj.wx.jpa.repository.NativeSql;
+import top.kyqzwj.wx.modules.v1.file.service.FileService;
+import top.kyqzwj.wx.modules.v1.file.domain.KzFile;
 import top.kyqzwj.wx.modules.v1.user.domain.KzUser;
+import top.kyqzwj.wx.modules.v1.user.dto.KzUserDto;
 import top.kyqzwj.wx.modules.v1.user.repository.UserRepository;
 import top.kyqzwj.wx.modules.v1.user.service.UserService;
 import top.kyqzwj.wx.util.*;
 
-import java.util.Arrays;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Description:
@@ -33,8 +37,14 @@ public class UserServiceImpl implements UserService {
     @Value("${weChat.secret}")
     private String secret;
 
+    @Value("${weChat.baseurl}")
+    private String baseUrl;
+
     @Autowired
     UserRepository repository;
+
+    @Autowired
+    FileService fileService;
 
     @Override
     public ResponsePayload wxLogin(Map<String, Object> data) throws Exception {
@@ -75,9 +85,33 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponsePayload getUser(String userId){
         KzUser user = repository.findById(userId).get();
+
+        //头像和海报处理：如果头像不是以url格式的或者poster不为空，则表示它们修改过文件，需要从文件表获取数据的路径，便于服务器迁移。
+        Set<String> fileId = new HashSet<>();
+        String avatar = user.getAvatar();
+        if(isFileId(avatar)){
+            fileId.add(avatar);
+        }
+        String poster = user.getPoster();
+        if(isFileId(poster)){
+            fileId.add(poster);
+        }
+        Map<String, String> filePathMapper = fileService.getFilePath(fileId);
+        if(isFileId(avatar)){
+            user.setAvatar(baseUrl + filePathMapper.get(avatar));
+        }
+        if(isFileId(poster)){
+            user.setPoster(baseUrl + filePathMapper.get(poster));
+        }
+
+        //对数据进行转换
         Map<String, Object> retMap = BeanUtil.toBean(user, Map.class);
         retMap.put("token", JwtTokenUtil.generateToken(user));
         return ResponsePayload.success(retMap);
+    }
+
+    private boolean isFileId(String source){
+        return StringUtil.isNotEmpty(source) && !(source.startsWith("https://") || source.startsWith("http://"));
     }
 
     /**
@@ -98,5 +132,36 @@ public class UserServiceImpl implements UserService {
         }
 
         return ResponsePayload.success(retMap);
+    }
+
+    @Override
+    public void updateUser(String userId, KzUserDto userDto) {
+        KzUser storedUser = repository.findById(userId).orElseThrow(RuntimeException::new);
+        BeanUtil.beanCopy(userDto, storedUser, false);
+        repository.save(storedUser);
+    }
+
+    @Override
+    public String changeAvatar(MultipartFile avatarFile) {
+        KzFile kzFile = fileService.saveMonthlyFile(avatarFile, "avatar");
+
+        String userId = UserHelper.getUserId();
+        KzUser kzUser = repository.findById(userId).get();
+        kzUser.setAvatar(kzFile.getId());
+        repository.save(kzUser);
+
+        return baseUrl+kzFile.getPath();
+    }
+
+    @Override
+    public String changePoster(MultipartFile avatarFile) {
+        KzFile kzFile = fileService.saveMonthlyFile(avatarFile, "poster");
+
+        String userId = UserHelper.getUserId();
+        KzUser kzUser = repository.findById(userId).get();
+        kzUser.setPoster(kzFile.getId());
+        repository.save(kzUser);
+
+        return baseUrl+kzFile.getPath();
     }
 }

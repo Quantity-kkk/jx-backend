@@ -1,6 +1,8 @@
 package top.kyqzwj.wx.modules.v1.user.service;
 
+import org.springframework.web.multipart.MultipartFile;
 import top.kyqzwj.wx.facade.ResponsePayload;
+import top.kyqzwj.wx.modules.v1.user.dto.KzUserDto;
 
 import java.util.Map;
 
@@ -42,4 +44,24 @@ public interface UserService {
      * */
     ResponsePayload getVisitUser(String userId);
 
+    /**
+     * 更新用户信息
+     * @param userId
+     * @param userDto
+     * */
+    void updateUser(String userId, KzUserDto userDto);
+
+    /**
+     * 修改用户头像
+     * @param avatarFile
+     * @return
+     * */
+    String changeAvatar(MultipartFile avatarFile);
+
+    /**
+     * 修改用户封面
+     * @param posterFile
+     * @return
+     * */
+    String changePoster(MultipartFile posterFile);
 }

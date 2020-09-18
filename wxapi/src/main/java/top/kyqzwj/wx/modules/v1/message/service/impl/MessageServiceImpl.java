@@ -1,20 +1,17 @@
 package top.kyqzwj.wx.modules.v1.message.service.impl;
 
-import net.dongliu.commons.Sys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import top.kyqzwj.wx.attribute.CommonAttribute;
 import top.kyqzwj.wx.facade.ResponsePayload;
 import top.kyqzwj.wx.jpa.repository.NativeSql;
-import top.kyqzwj.wx.modules.v1.message.domain.KzFile;
+import top.kyqzwj.wx.modules.v1.file.service.FileService;
 import top.kyqzwj.wx.modules.v1.message.domain.KzMessage;
-import top.kyqzwj.wx.modules.v1.message.repository.KzFileRepository;
+import top.kyqzwj.wx.modules.v1.file.repository.KzFileRepository;
 import top.kyqzwj.wx.modules.v1.message.repository.MessageRepository;
 import top.kyqzwj.wx.modules.v1.message.service.MessageService;
 import top.kyqzwj.wx.util.*;
@@ -46,6 +43,9 @@ public class MessageServiceImpl implements MessageService {
     @Autowired
     KzFileRepository fileRepository;
 
+    @Autowired
+    FileService fileService;
+
     @Override
     public ResponsePayload leaveMessage(Map<String, Object> paramMap) {
         KzMessage message = new KzMessage();
@@ -65,19 +65,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public ResponsePayload uploadImage(MultipartFile uploadImage) {
-        String fileDestPath = "/msgImage/" +FileUtil.getyyyyMMddPath(new Date());
-        String fileName = uploadImage.getOriginalFilename();
-
-        FileUtil.saveFile(uploadImage, baseFileDir + fileDestPath);
-        KzFile kzFile = new KzFile();
-        kzFile.setFileSize(uploadImage.getSize());
-
-        kzFile.setPath(fileDestPath+"/"+fileName);
-        kzFile.setFileType(fileName.substring(fileName.lastIndexOf(".")));
-        kzFile.setOriginalName(fileName);
-
-        kzFile = fileRepository.save(kzFile);
-        return ResponsePayload.success(kzFile);
+        return ResponsePayload.success(fileService.saveDailyFile(uploadImage, "msgImage"));
     }
 
     @Override
@@ -111,12 +99,7 @@ public class MessageServiceImpl implements MessageService {
             Map<String, Object> writerMap = ListUtil.convertList2Map(writerList, "id");
 
             //3.获取图片信息
-            Map<String, String> imageMap = new HashMap<>(16);
-            if(imageSet.size()>0){
-                String queryImgSql = "select id, path from kz_file where id in ("+ StringUtil.joinForSqlIn(imageSet,",") +")";
-                List<Map> imgList = NativeSql.findByNativeSQL(queryImgSql, null);
-                imageMap = ListUtil.convertList2Map(imgList,"id", "path");
-            }
+            Map<String, String> imageMap = fileService.getFilePath(imageSet);
 
             //4.获取评论信息
             String queryCommentSql = "select message_id as id,count(*) as count from kz_comment where message_id in ("+StringUtil.joinForSqlIn(msgIdSet,",")+") GROUP BY message_id";

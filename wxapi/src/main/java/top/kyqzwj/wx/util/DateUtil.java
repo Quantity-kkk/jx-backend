@@ -2,6 +2,7 @@ package top.kyqzwj.wx.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -45,6 +46,13 @@ public class DateUtil {
     public static final String format_yyyy_MM_dd_path = "yyyy/MM/dd";
 
     /**
+     * yyyy/MM的时间路径
+     */
+    public static final String format_yyyy_MM_path = "yyyy/MM";
+
+    public static String[] weekDays = {"星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"};
+
+    /**
      * 格式化日期对象
      *
      * @param date   日期对象
@@ -80,5 +88,22 @@ public class DateUtil {
             }
         }
         return result;
+    }
+
+    /**
+     * 获取当前日期是星期几<br>
+     *
+     * @param dt
+     * @return 当前日期是星期几
+     */
+    public static String getWeekOfDate(Date dt) {
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(dt);
+        int w = cal.get(Calendar.DAY_OF_WEEK) - 1;
+        if (w < 0){
+            w = 0;
+        }
+        return weekDays[w];
     }
 }

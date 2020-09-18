@@ -1,5 +1,6 @@
 package top.kyqzwj.wx.util;
 
+import net.sourceforge.pinyin4j.PinyinHelper;
 import org.apache.commons.lang3.CharSequenceUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -583,4 +584,30 @@ public class StringUtil {
         return StringUtils.unwrap(str, wrapToken);
     }
 
+
+    /**
+     * 传入一个单词，获取其第一个字符发音对应的英文字母
+     * 如果是英文和汉字：A-Z
+     * 数字及其他：#
+     * */
+    public static String getAnchor(String word){
+        String ret = "";
+        if(StringUtil.isEmpty(word)){
+            return ret+'#';
+        }
+        String upWord = word.toUpperCase();
+        char c = upWord.charAt(0);
+        if(String.valueOf(c).matches("[A-Z]+")){
+            return ret+c;
+        }else if(String.valueOf(c).matches("[\\u4E00-\\u9FA5]+")){
+            String[] pinyinArray = PinyinHelper.toHanyuPinyinStringArray(c);
+            if(pinyinArray!=null){
+                return (ret+pinyinArray[0].charAt(0)).toUpperCase();
+            }else {
+                return ret+'#';
+            }
+        }else {
+            return ret+'#';
+        }
+    }
 }

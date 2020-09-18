@@ -1,9 +1,9 @@
-package top.kyqzwj.wx.modules.v1.message.repository;
+package top.kyqzwj.wx.modules.v1.file.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import top.kyqzwj.wx.modules.v1.message.domain.KzFile;
+import top.kyqzwj.wx.modules.v1.file.domain.KzFile;
 
 
 /**

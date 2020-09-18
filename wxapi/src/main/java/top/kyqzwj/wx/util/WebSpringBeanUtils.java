@@ -4,6 +4,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Component;
 
 /**
  * Description:
@@ -14,6 +15,7 @@ import org.springframework.lang.Nullable;
  * @version 1.0
  * @Date 2020/8/27 22:23
  */
+@Component
 public class WebSpringBeanUtils implements ApplicationContextAware {
     private static ApplicationContext applicationContext = null;
 

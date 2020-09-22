@@ -31,10 +31,14 @@ public class KzActivityCost {
     private String id;
 
     @Column(name="activity_date")
+    @Temporal(TemporalType.DATE)
     private Date activityDate;
 
     @Column(name="week", length = 32)
     private String week;
+
+    @Column(name="quarter", length = 32)
+    private String quarter;
 
     @Column(name="people_count")
     private Integer peopleCount;

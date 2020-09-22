@@ -31,6 +31,7 @@ public class KzOtSubsidy {
     private String id;
 
     @Column(name="over_date")
+    @Temporal(TemporalType.DATE)
     private Date overDate;
 
     @Column(name="week", length = 32)
@@ -41,6 +42,9 @@ public class KzOtSubsidy {
 
     @Column(name="cost")
     private BigDecimal cost;
+
+    @Column(name="over_time_desc")
+    private String overTimeDesc;
 
     @Column(name="create_by", length = 32)
     private String createBy;

@@ -68,8 +68,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().httpBasic().authenticationEntryPoint(authenticationEntryPoint)
-                .and().authorizeRequests().antMatchers("**/user/wxLogin").permitAll()
-                .and().authorizeRequests().antMatchers("/user").authenticated()
+                .and().authorizeRequests().antMatchers("/**/user/wxLogin").permitAll()
+                .and().authorizeRequests().antMatchers("/v1/**").authenticated()
         ;
 
         // 无权访问 JSON 格式的数据

@@ -106,4 +106,14 @@ public class DateUtil {
         }
         return weekDays[w];
     }
+
+    public static String getQuarterByDate(Date activityDate) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(activityDate);
+        int month = cal.get(Calendar.MONTH) + 1;
+
+        int quarter = month%3 == 0 ? month/3 : month/3+1;
+
+        return quarter+"季度";
+    }
 }

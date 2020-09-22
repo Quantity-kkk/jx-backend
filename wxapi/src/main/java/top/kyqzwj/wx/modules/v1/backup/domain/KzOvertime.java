@@ -31,6 +31,7 @@ public class KzOvertime {
     private String id;
 
     @Column(name="over_date")
+    @Temporal(TemporalType.DATE)
     private Date overDate;
 
     @Column(name="week", length = 32)

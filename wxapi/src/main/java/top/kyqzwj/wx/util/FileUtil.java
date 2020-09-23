@@ -1,5 +1,6 @@
 package top.kyqzwj.wx.util;
 
+import net.coobird.thumbnailator.Thumbnails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,7 +42,11 @@ public class FileUtil {
         fileName = Paths.get(destDir, file.getOriginalFilename());
 
         try{
-            Files.write(fileName, file.getBytes());
+            //对图片进行了压缩再存储
+            Thumbnails.of(file.getInputStream())
+                    .scale(1f)
+                    .outputQuality(0.2f)
+                    .toFile(fileName.toFile());
         } catch (Exception e) {
             logger.error("创建文件失败[{}]", e.toString(), e);
             return null;

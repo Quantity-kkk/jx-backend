@@ -13,7 +13,10 @@ import top.kyqzwj.wx.modules.v1.file.service.FileService;
 import top.kyqzwj.wx.modules.v1.message.domain.KzMessage;
 import top.kyqzwj.wx.modules.v1.file.repository.KzFileRepository;
 import top.kyqzwj.wx.modules.v1.message.repository.MessageRepository;
+import top.kyqzwj.wx.modules.v1.message.service.AsyncMessageService;
 import top.kyqzwj.wx.modules.v1.message.service.MessageService;
+import top.kyqzwj.wx.modules.v1.user.domain.KzUser;
+import top.kyqzwj.wx.modules.v1.user.repository.UserRepository;
 import top.kyqzwj.wx.util.*;
 
 import java.util.*;
@@ -37,6 +40,12 @@ public class MessageServiceImpl implements MessageService {
     @Value("${weChat.baseurl}")
     private String baseUrl;
 
+    @Value("${weChat.appid}")
+    private String appid;
+
+    @Value("${weChat.secret}")
+    private String secret;
+
     @Autowired
     MessageRepository messageRepository;
 
@@ -46,20 +55,45 @@ public class MessageServiceImpl implements MessageService {
     @Autowired
     FileService fileService;
 
+    @Autowired
+    AsyncMessageService asyncMessageService;
+
+    @Autowired
+    UserRepository userRepository;
+
     @Override
     public ResponsePayload leaveMessage(Map<String, Object> paramMap) {
         KzMessage message = new KzMessage();
-        message.setContent((String) paramMap.get("content"));
-        message.setTargetUser((String) paramMap.get("targetUser"));
-        message.setWriter((String) paramMap.get("writer"));
+        String targetUserId = (String) paramMap.get("targetUser");
+        String writer = (String) paramMap.get("writer");
+        String writerName = (String) paramMap.get("writerName");
+        String content = (String) paramMap.get("content");
+        message.setContent(content);
+        message.setTargetUser(targetUserId);
+        message.setWriter(writer);
 
         List<String> images = (List) paramMap.get("images");
         if(ListUtil.isNotEmpty(images)){
             message.setImageFiles(images.stream().reduce((x,y)->x+"|"+y).get());
         }
-        messageRepository.save(message);
+        message = messageRepository.save(message);
+
 
         //TODO 异步消息，进行小程序模板消息发送
+        KzUser user = userRepository.findById(targetUserId).orElse(null);
+        List<String> tmpIds = (List<String>) paramMap.get("tmpIds");
+        if(user!=null && ListUtil.isNotEmpty(tmpIds)){
+            asyncMessageService.sendSubscribeMessage(
+                    "您有新的留言！",
+                    writerName,
+                    user.getNickName(),
+                    content,
+                    "/pages/message-detail/index?messageId="+message.getId(),
+                    message.getCreateTime(),
+                    tmpIds
+                    );
+        }
+
         return ResponsePayload.success();
     }
 
@@ -193,5 +227,11 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public void deleteMessage(String messageId) {
         messageRepository.deleteById(messageId);
+    }
+
+    private Map getSubsribeData(Object value){
+        Map ret = new HashMap(4);
+        ret.put("value", value);
+        return ret;
     }
 }

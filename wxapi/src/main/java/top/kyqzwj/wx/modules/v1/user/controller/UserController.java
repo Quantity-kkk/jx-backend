@@ -30,7 +30,7 @@ public class UserController {
     @ResponseBody
     @RequestMapping("")
     public String index(){
-        return "idsdx";
+        return "index";
     }
     /**
      * 微信小程序登录接口

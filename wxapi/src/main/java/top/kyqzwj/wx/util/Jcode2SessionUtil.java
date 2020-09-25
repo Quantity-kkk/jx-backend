@@ -95,7 +95,10 @@ public class Jcode2SessionUtil {
         params.put("grant_type","client_credential");
         params.put("appid",appid);
         params.put("secret",secret);
-        return Requests.get(WeChatUrl.GET_ACCESS_TOKEN.getUrl()).params(params).send().readToText();
+        String ret = Requests.get(WeChatUrl.GET_ACCESS_TOKEN.getUrl()).params(params).send().readToText();
+
+        Map<String, Object> requestRet = (Map<String, Object>) JSON.parse(ret);
+        return (String) requestRet.get("access_token");
     }
 
     /**
@@ -125,4 +128,29 @@ public class Jcode2SessionUtil {
         return Requests.post(WeChatUrl.SEND_TEMPLATE_MESSAGE.getUrl()+"?access_token=" + access_token).params(params).send().readToText();
     }
 
+    /**
+     * 发送订阅消息
+     * @param access_token      接口调用凭证
+     * @param touser            接收者（用户）的 openid
+     * @param template_id       所需下发的订阅模板id
+     * @param page              非必填，点击模版卡片后跳转的页面，仅限本小程序内的页面。支持带参数，（eg：index?foo=bar）。该字段不填则模版无法跳转
+     * @param data              必填，模板内容，格式形如 { "key1": { "value": any }, "key2": { "value": any } }
+     * @param miniprogram_state  非必填，跳转小程序类型：developer为开发版；trial为体验版；formal为正式版；默认为正式版
+     * @return                  返回String可转JSON
+     */
+    public static String sendSubscribeMessage(String access_token,String touser,String template_id,String page, Object data,String miniprogram_state){
+        JSONObject params = new JSONObject();
+        params.put("touser",touser);
+        params.put("template_id",template_id);
+        if (null != page && !"".equals(page)){
+            params.put("page",page);
+        }
+        params.put("data",data);
+        if (null != miniprogram_state && !"".equals(miniprogram_state)){
+            params.put("miniprogram_state",miniprogram_state);
+        }
+
+        //发送请求
+        return Requests.post(WeChatUrl.SEND_SUBSCRIBE_MESSAGE.getUrl()+"?access_token=" + access_token).params(params).send().readToText();
+    }
 }

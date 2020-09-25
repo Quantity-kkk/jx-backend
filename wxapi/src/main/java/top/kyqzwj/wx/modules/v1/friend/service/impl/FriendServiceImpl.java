@@ -39,18 +39,24 @@ public class FriendServiceImpl implements FriendService {
 
         //如果是好友则删除，如果不是则添加
         KzUserAssociate associate = friendRepository.findFirstByUserIdAndFriendId(currentUserId, friendUserId);
+        KzUserAssociate associate2 = friendRepository.findFirstByUserIdAndFriendId(friendUserId, currentUserId);
         if(associate!=null){
-            friendRepository.delete(associate);
+            friendRepository.deleteAll(Arrays.asList(associate, associate2));
         }else {
             //不能添加自己为好友
             if(StringUtil.isNotEmpty(friendUserId) && friendUserId.equals(currentUserId)){
                 return new ResponsePayload(false,20002,"Can Not Add Yourself",null);
             }
 
+            //互为好友,需要加两条记录
             associate = new KzUserAssociate();
             associate.setUserId(currentUserId);
             associate.setFriendId(friendUserId);
-            friendRepository.save(associate);
+
+            associate2 = new KzUserAssociate();
+            associate2.setUserId(friendUserId);
+            associate2.setFriendId(currentUserId);
+            friendRepository.saveAll(Arrays.asList(associate,associate2));
         }
 
         return ResponsePayload.success();

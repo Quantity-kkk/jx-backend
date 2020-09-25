@@ -33,6 +33,7 @@ public enum WeChatUrl {
 
     ,GET_ACCESS_TOKEN("https://api.weixin.qq.com/cgi-bin/token")
     ,SEND_TEMPLATE_MESSAGE("https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send")
+    ,SEND_SUBSCRIBE_MESSAGE("https://api.weixin.qq.com/cgi-bin/message/subscribe/send")
     ;
 
     private String url;

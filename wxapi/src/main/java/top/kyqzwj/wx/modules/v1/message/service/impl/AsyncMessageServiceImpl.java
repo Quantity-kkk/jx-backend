@@ -40,7 +40,7 @@ public class AsyncMessageServiceImpl  implements AsyncMessageService {
         String accessToken = Jcode2SessionUtil.getAccessToken(appid, secret);
         for(String tmpId : templateIds){
             Map<String, Object> dataMap = new HashMap<>(6);
-            dataMap.put("thing1",subject);
+            dataMap.put("thing1",getSubscribeData(subject));
             dataMap.put("name2",getSubscribeData(author));
             dataMap.put("thing3",getSubscribeData(content));
             dataMap.put("time4",getSubscribeData(DateUtil.formatDate(time, DateUtil.format_yyyy_MM_dd_HHmmss)));

@@ -149,8 +149,16 @@ public class Jcode2SessionUtil {
         if (null != miniprogram_state && !"".equals(miniprogram_state)){
             params.put("miniprogram_state",miniprogram_state);
         }
+        Map<String, Object> headers = new HashMap<>(4);
+        headers.put("Content-Type","application/json");
 
         //发送请求
-        return Requests.post(WeChatUrl.SEND_SUBSCRIBE_MESSAGE.getUrl()+"?access_token=" + access_token).params(params).send().readToText();
+        return Requests
+                .post(WeChatUrl.SEND_SUBSCRIBE_MESSAGE.getUrl()+"?access_token=" + access_token)
+                .headers(headers)
+                .jsonBody(params)
+                .send()
+                .readToText();
+
     }
 }

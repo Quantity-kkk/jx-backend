@@ -86,7 +86,7 @@ public class MessageServiceImpl implements MessageService {
             asyncMessageService.sendSubscribeMessage(
                     "您有新的留言！",
                     writerName,
-                    user.getNickName(),
+                    user.getOpenId(),
                     content,
                     "/pages/message-detail/index?messageId="+message.getId(),
                     message.getCreateTime(),
